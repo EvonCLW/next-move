@@ -1,5 +1,7 @@
 # Next Move
 
+[![Tests](https://github.com/EvonCLW/next-move/actions/workflows/test.yml/badge.svg)](https://github.com/EvonCLW/next-move/actions/workflows/test.yml)
+
 A step-by-step web app for decisions that matter: job offers, which course to study, whether to go on a date, where to live, big purchases, or anything else.
 
 **Live demo:** https://EvonCLW.github.io/next-move/
@@ -28,7 +30,7 @@ The app walks you through seven steps:
 |---|---|
 | **Weighted scoring** | Each option's score = sum of (factor weight × your rating), shown as a percentage of the maximum. |
 | **Pairwise comparison** (simplified Analytic Hierarchy Process) | Weights come from "A vs B" judgments, which are more honest than rating everything on its own. Weights are calculated with the geometric mean method. |
-| **Consistency check** | Flags contradictory answers (A > B, B > C, but C > A) using the AHP consistency ratio (warns above 0.1). |
+| **Contradiction check** | Finds three comparisons that can't all be true (A > B, B > C, but C > A), names them in plain words and highlights them. Comparisons the user hasn't answered are ignored. |
 | **Dealbreakers** | Options scoring below a minimum on a must-have factor are ruled out, so strengths elsewhere can't hide them. |
 | **Two time frames** | Short-term and long-term scores reveal options that start weak but grow, or the reverse. |
 | **Sensitivity analysis** | Finds the smallest change to any single factor's weight that would flip the winner, and labels the result as close, fairly clear, or solid. |
@@ -62,7 +64,27 @@ Each category has its own built-in example. Adding a new category only means add
 ## Built with
 
 - HTML, CSS and JavaScript (no frameworks, no build step)
+- Node's built-in test runner for automated tests, run on every push with GitHub Actions
 - Hosted on GitHub Pages
+
+## Project structure
+
+| File | What it does |
+|---|---|
+| `index.html` | Page structure |
+| `style.css` | Look and layout |
+| `engine.js` | All the decision maths: weights, scores, dealbreakers, sensitivity and contradiction checks. Pure functions with no page code, so they can be tested on their own. |
+| `categories.js` | The decision categories, their factors and examples |
+| `app.js` | Connects the page to the engine: reads input, saves progress, draws results |
+| `tests/engine.test.js` | 33 automated tests for the engine and the category data |
+
+## Testing
+
+```bash
+npm test
+```
+
+No installation needed (requires Node.js 18 or newer). The tests check, for example, that weights always add up to 100%, that "much more important" gives five times the weight, that a dealbreaker rules an option out, that the suggested "flip point" really produces a tie, and that untouched comparisons never trigger a contradiction warning.
 
 ## Roadmap
 
@@ -73,7 +95,7 @@ Each category has its own built-in example. Adding a new category only means add
 
 ## Run it locally
 
-Download this repo and open `index.html` in your browser.
+Download this repo and open `index.html` in your browser. To run the tests, see [Testing](#testing).
 
 ## Author
 
